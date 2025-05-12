@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">ExpenseTracker</string>
+    <string name="save_expense">Save Expense</string>
+    <string name="note_optional">Note (Optional)</string>
+    <string name="amount">Amount</string>
+    <string name="schedule_daily_reminder">Schedule Daily Reminder</string>
+    <string name="view_expenses">View Expenses</string>
+    <string name="add_expense">Add Expense</string>
+    <string name="converted_total">Converted Total: --</string>
+    <string name="local_total">Local Total: £0.00</string>
+    <string name="date">Date</string>
+    <string name="note">Note</string>
+    <string name="category">Category</string>
+    <string name="total">Total: £0.00</string>
+    <string name="expense_item_price">£0.00</string>
+    <string name="delete_note">💡 Swipe left or right on an expense to delete it</string>
+    <string name="new_category_optional">New category (optional)</string>
+    <string name="add_category">Add Category</string>
+    <string name="set_budget">Set Budget</string>
+    <string name="monthly_budget_tracker">Monthly Budget Tracker</string>
+    <string name="swipe_left_or_right_to_delete_an_expense">💡 Swipe left or right to delete an expense</string>
+    <string name="clear_filters">Clear Filters (Category &amp; Date)</string>
+    <string name="pick_date">Pick Date</string>
+    <string name="start_date">Start Date</string>
+    <string name="end_date">End Date</string>
+    <string name="no_date_range_selected">No date range selected</string>
+</resources>
