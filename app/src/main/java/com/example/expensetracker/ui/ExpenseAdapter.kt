@@ -47,7 +47,10 @@ class ExpenseAdapter(private var expenses: List<Expense>) :
         val formatter = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault())
         return formatter.format(Date(millis))
     }
-    fun getExpenseAt(position: Int): Expense = expenses[position]
+    fun getExpenseAt(position: Int): Expense {
+        return expenses[position]
+    }
+
 
     fun updateData(newExpenses: List<Expense>) {
         expenses = newExpenses

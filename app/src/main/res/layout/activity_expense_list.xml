@@ -58,6 +58,17 @@
         android:text="@string/clear_filters"
         android:layout_marginBottom="8dp" />
 
+    <TextView
+        android:id="@+id/swipeNote"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/delete_note"
+        android:textSize="14sp"
+        android:textColor="#666666"
+        android:gravity="center_horizontal"
+        android:padding="8dp"
+        android:layout_marginBottom="4dp" />
+
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="0dp"

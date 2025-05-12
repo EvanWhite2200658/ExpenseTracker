@@ -6,13 +6,13 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.expensetracker.R
 import com.example.expensetracker.viewmodel.CategoryViewModel
 import com.example.expensetracker.data.Expense
 import com.example.expensetracker.viewmodel.ExpenseViewModel
-import org.w3c.dom.Text
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -30,8 +30,6 @@ class ExpenseListActivity : AppCompatActivity() {
     private var endDate: Long? = null
     private val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_expense_list)
@@ -41,6 +39,22 @@ class ExpenseListActivity : AppCompatActivity() {
         adapter = ExpenseAdapter(emptyList())
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
+
+        val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean = false
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position = viewHolder.adapterPosition
+                val expenseToDelete = adapter.getExpenseAt(position)
+                viewModel.delete(expenseToDelete)
+                Toast.makeText(this@ExpenseListActivity, "Expense deleted", Toast.LENGTH_SHORT).show()
+            }
+        })
+        itemTouchHelper.attachToRecyclerView(recyclerView)
 
         viewModel = ViewModelProvider(this)[ExpenseViewModel::class.java]
         categoryViewModel = ViewModelProvider(this)[CategoryViewModel::class.java]
@@ -130,6 +144,4 @@ class ExpenseListActivity : AppCompatActivity() {
             else -> "No date range selected"
         }
     }
-
-
 }
