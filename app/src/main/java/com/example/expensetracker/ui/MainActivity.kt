@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // ✅ Request POST_NOTIFICATIONS permission on Android 13+
+        // request POST_NOTIFICATIONS permission on Android 13+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 1)
@@ -59,7 +59,9 @@ class MainActivity : AppCompatActivity() {
         budgetAmount = budgetPrefs.getFloat("budget", 100f)
 
 
-        // Button listeners
+        // button listeners
+
+        //brings up text input dialog to set the budget limit
         buttonSetBudget.setOnClickListener {
             val input = EditText(this).apply{
                 inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
@@ -111,7 +113,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
+    // shows the timepicker dialog that lets the user schedule the time for daily reminders
     private fun showTimePicker() {
         val now = Calendar.getInstance()
         TimePickerDialog(
@@ -125,7 +127,9 @@ class MainActivity : AppCompatActivity() {
         ).show()
     }
 
+    //schedules reminders at the passed time
     private fun scheduleReminderAt(hour: Int, minute: Int) {
+        //saves time to sharedprefs to maintain the state each day and when app is closed
         val prefs = getSharedPreferences("reminder_prefs", MODE_PRIVATE)
         prefs.edit().apply {
             putInt("hour", hour)
@@ -133,7 +137,10 @@ class MainActivity : AppCompatActivity() {
             apply()
         }
 
+        //create intent to trigger BroadcastReceiver when alarm goes off
         val intent = Intent(this, com.example.expensetracker.receiver.ReminderReceiver::class.java)
+
+        //wraps intent in a pendingintent to be executed by AlarmManager
         val pendingIntent = PendingIntent.getBroadcast(
             this,
             0,
@@ -141,11 +148,14 @@ class MainActivity : AppCompatActivity() {
             PendingIntent.FLAG_IMMUTABLE
         )
 
+        //gets device local time to send reminder at correct time
         val calendar = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, hour)
             set(Calendar.MINUTE, minute)
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
+
+            //makes sure that reminder cannot be set for an already elapsed time
             if (before(Calendar.getInstance())) {
                 add(Calendar.DAY_OF_YEAR, 1)
             }
@@ -153,6 +163,7 @@ class MainActivity : AppCompatActivity() {
 
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
+        //checks for or asks for permission to set exact alarms
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             if (!alarmManager.canScheduleExactAlarms()) {
                 val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
@@ -180,6 +191,7 @@ class MainActivity : AppCompatActivity() {
         Log.d("Reminder", "Alarm set for ${calendar.time}")
     }
 
+    //updates the budget tracker view whenever an expense is added or removed
     private fun updateBudgetUI() {
         val spent = viewModel.total.value ?: 0f
         val percentUsed = ((spent / budgetAmount) * 100).coerceAtMost(100f).toInt()
@@ -193,11 +205,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    //sends alert to notification channel if budget limit is exceeded
     private fun sendBudgetExceededNotification() {
         val channelId = "budget_warning_channel"
         val notificationId = 2001
 
         val builder = NotificationCompat.Builder(this, channelId)
+            //using a default android icon because the notification was suppressed otherwise
             .setSmallIcon(android.R.drawable.ic_dialog_alert)
             .setContentTitle("Budget Exceeded")
             .setContentText("You've spent over your monthly budget.")
@@ -219,16 +233,19 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
+    //API fetch for conversion rate of GBP to EUR
     private fun fetchConvertedCurrency(amount: Float) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
+                //uses free conversion API with API key
                 val response = URL("https://v6.exchangerate-api.com/v6/3cbb7abb77bb35413703dd95/latest/GBP").readText()
                 Log.d("Currency", "Raw response: $response")
 
+                //returns as massive list of most currency conversions from GBP
                 val json = JSONObject(response)
                 if (!json.has("conversion_rates")) throw Exception("No 'conversion_rates' field found")
 
+                //filters list down to just GBP -> EUR rate
                 val rate = json.getJSONObject("conversion_rates").getDouble("EUR")
                 val converted = amount * rate
 

@@ -40,6 +40,7 @@ class ExpenseListActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
 
+        //this function provides the swipe-to-delete for expenses in the list view
         val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
             override fun onMove(
                 recyclerView: RecyclerView,
@@ -77,6 +78,7 @@ class ExpenseListActivity : AppCompatActivity() {
             spinnerAdapter.notifyDataSetChanged()
         }
 
+        //filters expenses by category when the user selects the filter option
         spinnerCategory.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 selectedCategory = if (position == 0) null else parent.getItemAtPosition(position).toString()
@@ -85,6 +87,7 @@ class ExpenseListActivity : AppCompatActivity() {
             override fun onNothingSelected(parent: AdapterView<*>) {}
         }
 
+        //opens DatePicker dialog to select start date for filtering expenses
         buttonStartDate.setOnClickListener {
             val calendar = Calendar.getInstance()
             DatePickerDialog(this, { _, year, month, day ->
@@ -94,7 +97,7 @@ class ExpenseListActivity : AppCompatActivity() {
                 filterExpenses()
             }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
         }
-
+        //opens dialog to select end date for filtering expenses
         buttonEndDate.setOnClickListener {
             val calendar = Calendar.getInstance()
             DatePickerDialog(this, { _, year, month, day ->
@@ -104,7 +107,7 @@ class ExpenseListActivity : AppCompatActivity() {
                 filterExpenses()
             }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
         }
-
+        //clears all set filters
         buttonClearFilters.setOnClickListener {
             selectedCategory = null
             startDate = null
@@ -114,14 +117,17 @@ class ExpenseListActivity : AppCompatActivity() {
             filterExpenses()
         }
 
+        //observer set on the expense data that applies filters whenever change is detected
         viewModel.allExpenses.observe(this) {
             filterExpenses()
         }
     }
 
+    //function filters expenses by the selected filters
     private fun filterExpenses() {
         val expenses = viewModel.allExpenses.value ?: return
 
+        //applies filter logic to expenses and saves as the val filtered
         val filtered = expenses.filter { expense ->
             val matchesCategory = selectedCategory == null || expense.category == selectedCategory
             val matchesStart = startDate == null || expense.timestamp >= startDate!!
@@ -129,11 +135,14 @@ class ExpenseListActivity : AppCompatActivity() {
             matchesCategory && matchesStart && matchesEnd
         }
 
+        //updates the dataview with filtered data
         adapter.updateData(filtered)
 
         val total = filtered.sumOf { it.amount.toDouble() }.toFloat()
         textTotal.text = "Total: £%.2f".format(total)
 
+
+        //informs the user what dates are selected as filters
         textDateRange.text = when {
             startDate != null && endDate != null ->
                 "From ${dateFormat.format(Date(startDate!!))} to ${dateFormat.format(Date(endDate!!))}"

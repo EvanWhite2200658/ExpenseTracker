@@ -2,7 +2,6 @@ package com.example.expensetracker.ui
 
 import android.os.Bundle
 import android.widget.*
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.expensetracker.R
@@ -12,17 +11,6 @@ import com.example.expensetracker.viewmodel.CategoryViewModel
 import com.example.expensetracker.viewmodel.ExpenseViewModel
 
 class AddExpenseActivity : AppCompatActivity() {
-    private lateinit var amountEditText: EditText
-    private lateinit var categorySpinner: Spinner
-    private lateinit var noteEditText: EditText
-    private lateinit var saveButton: Button
-    private lateinit var spinnerCategory: Spinner
-    private lateinit var editNewCategory: EditText
-    private lateinit var buttonAddCategory: Button
-    private lateinit var categoryViewModel: CategoryViewModel
-
-
-    private val viewModel: ExpenseViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,6 +62,7 @@ class AddExpenseActivity : AppCompatActivity() {
             val note = editNote.text.toString().trim()
             val category = spinnerCategory.selectedItem?.toString() ?: ""
 
+            //validates text entry, expense amount and category are required, note is not.
             if (amountText.isNotEmpty() && category.isNotEmpty()) {
                 val amount = amountText.toFloatOrNull()
                 if (amount != null) {
@@ -95,12 +84,5 @@ class AddExpenseActivity : AppCompatActivity() {
         }
     }
 
-
-    private fun setupSpinner(){
-        val categories = listOf("Food", "Transport", "Entertainment", "Shopping", "Other")
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, categories)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        categorySpinner.adapter = adapter
-    }
 
 }

@@ -9,7 +9,7 @@
     android:elevation="2dp">
 
 
-
+<!-- Input Fields -->
 <TextView android:id="@+id/textAmount"
         android:textStyle="bold"
         android:textSize="16sp"

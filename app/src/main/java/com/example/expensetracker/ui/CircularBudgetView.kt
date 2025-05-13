@@ -8,6 +8,7 @@ import android.view.View
 import kotlin.math.min
 import androidx.core.graphics.toColorInt
 
+// defines the circular progress bar for budget tracking
 class CircularBudgetView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null
@@ -25,6 +26,7 @@ class CircularBudgetView @JvmOverloads constructor(
             invalidate()
         }
 
+    //paints the text that displays total spend / total budget
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.WHITE
@@ -63,6 +65,7 @@ class CircularBudgetView @JvmOverloads constructor(
 
     }
 
+    //sets the ring colour to green when at <70% of budget, yellow when at >70%/<100% of budget and red when at >=100% of budget
     private fun getColorForPercent(percent: Int): Int {
         return when {
             percent < 70 -> "#4CAF50".toColorInt() // Green

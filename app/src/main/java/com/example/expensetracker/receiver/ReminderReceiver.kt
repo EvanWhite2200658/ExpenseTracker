@@ -12,13 +12,18 @@ import androidx.core.app.NotificationCompat
 import com.example.expensetracker.R
 import com.example.expensetracker.ui.MainActivity
 
+
+//BroadcastReceiver that handles daily reminders
 class ReminderReceiver : BroadcastReceiver() {
+
+    //called when the alarm or broadcast is received
     override fun onReceive(context: Context, intent: Intent?) {
         Log.d("Reminder", "Receiver triggered!")
 
         val channelId = "expense_reminder_channel"
         val notificationId = 1001
 
+        //intent to open MainActivity when the notification is clicked
         val openIntent = Intent(context, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
             context,
@@ -27,13 +32,15 @@ class ReminderReceiver : BroadcastReceiver() {
             PendingIntent.FLAG_IMMUTABLE
         )
 
+        //builds notification content
         val builder = NotificationCompat.Builder(context, channelId)
+            //default android icon used because notification is suppressed otherwise
             .setSmallIcon(android.R.drawable.ic_dialog_info)
             .setContentTitle("Daily Expense Reminder")
             .setContentText("Don't forget to log your expenses today.")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .setContentIntent(pendingIntent)
-            .setAutoCancel(true)
+            .setContentIntent(pendingIntent) //opens app when tapped
+            .setAutoCancel(true) //deletes notification when tapped
 
         val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
