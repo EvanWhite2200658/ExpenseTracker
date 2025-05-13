@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ExpenseTracker</string>
+    <string name="app_name">SmartSpend</string>
     <string name="save_expense">Save Expense</string>
     <string name="note_optional">Note (Optional)</string>
     <string name="amount">Amount</string>
